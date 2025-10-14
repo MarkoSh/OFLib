@@ -1,10 +1,17 @@
+import { Handler as CalcHandler } from '../scripts/tools/calc_background.js';
+
 const handlers: any[] = [
+	CalcHandler,
 ];
 
 const scripts: any[] = [
+	'tools/calc_lib.js',
+	'tools/transfer_lib.js',
+	// 'tools/tools_lib.js',
 ];
 
 const external: any[] = [
+	// 'https://code.jquery.com/jquery-3.7.1.slim.min.js',
 ];
 
 import PocketBase from '../vendor/pocketbase.es.mjs';
