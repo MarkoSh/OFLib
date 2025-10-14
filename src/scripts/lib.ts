@@ -1,6 +1,4 @@
 (async () => {
-	console.log('Lib');
-
 	window.injected = [];
 
 	window.URL = new Proxy(URL, {
