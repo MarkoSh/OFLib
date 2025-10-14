@@ -308,7 +308,7 @@ window.injected.push((OFLib: any) => {
 					},
 					offset,
 					// limit: $this.limit,
-					limit: 40,
+					limit: 10,
 					more: offset ? true : false,
 				};
 
@@ -487,7 +487,7 @@ window.injected.push((OFLib: any) => {
 					id: campaign.campaignId,
 					offset,
 					// limit: $this.limit,
-					limit: 40,
+					limit: 10,
 					more: offset ? true : false,
 				};
 
