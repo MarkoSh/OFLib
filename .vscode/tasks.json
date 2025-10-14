@@ -19,9 +19,16 @@
 			"options": {
 				"cwd": "${workspaceFolder}"
 			},
+			"dependsOrder": "sequence",
 			"dependsOn": [
+				"Delete",
 				"Copy"
 			]
+		},
+		{
+			"label": "Delete",
+			"type": "shell",
+			"command": "rm -rf build/ && mkdir build"
 		},
 		{
 			"label": "Copy",
