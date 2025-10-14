@@ -361,8 +361,6 @@
 
 					user.userId = userId;
 
-					delete user.id;
-
 					resolve(user);
 				}
 

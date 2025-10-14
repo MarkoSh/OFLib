@@ -61,7 +61,7 @@ window.injected.push((OFLib: any) => {
 
 			// showToast('Parser init');
 
-			const model: any = await $this.fetchUserMe();
+			const model: any = await OFLib.fetchUserMe();
 
 			if (model) {
 				$this.model = model;
@@ -870,36 +870,6 @@ window.injected.push((OFLib: any) => {
 			};
 
 			window.postMessage({ OFLibOutbox });
-		}
-
-		fetchUserMe() {
-			const $this = this;
-
-			return new Promise(async (resolve, reject) => {
-				const { fetchUserMe } = OFLib.actions.auth;
-
-				await fetchUserMe();
-
-				const state = OFLib.getState();
-
-				const { auth, users } = state;
-
-				const { isLogin, user: userId } = auth;
-
-				if (isLogin) {
-					const { items } = users;
-
-					const user = items[userId];
-
-					user.userId = userId;
-
-					delete user.id;
-
-					resolve(user);
-				}
-
-				resolve(false);
-			});
 		}
 
 		fetchChatsMessages(params: any) {
