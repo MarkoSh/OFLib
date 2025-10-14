@@ -5,8 +5,8 @@ const handlers: any[] = [
 ];
 
 const scripts: any[] = [
-	// 'tools/calc_lib.js',
-	// 'tools/transfer.js',
+	'tools/calc_lib.js',
+	'tools/transfer.js',
 ];
 
 const external: any[] = [
