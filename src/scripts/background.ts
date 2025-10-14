@@ -1,13 +1,13 @@
-import { Handler as CalcHandler } from '../scripts/tools/calc_background.js';
+import { Handler as CalcHandler } from '../scripts/tools/backgrounds/calc_background.js';
 
 const handlers: any[] = [
 	CalcHandler,
 ];
 
 const scripts: any[] = [
-	'tools/calc_lib.js',
-	'tools/transfer_lib.js',
-	// 'tools/tools_lib.js',
+	'tools/injects/calc_lib.js',
+	'tools/injects/transfer_lib.js',
+	// 'tools/injects/tools_lib.js',
 ];
 
 const external: any[] = [
