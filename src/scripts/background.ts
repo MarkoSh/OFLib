@@ -11,7 +11,6 @@ const scripts: any[] = [
 ];
 
 const external: any[] = [
-	// 'https://code.jquery.com/jquery-3.7.1.slim.min.js',
 ];
 
 import PocketBase from '../vendor/pocketbase.es.mjs';
