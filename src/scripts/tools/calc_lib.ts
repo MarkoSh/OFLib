@@ -59,9 +59,7 @@ window.injected.push((OFLib: any) => {
 
 			console.log('Parser init');
 
-			// showToast('Parser init');
-
-			const model: any = await OFLib.fetchUserMe();
+			const model = OFLib.model;
 
 			if (model) {
 				$this.model = model;
@@ -128,8 +126,6 @@ window.injected.push((OFLib: any) => {
 			} else { }
 
 			console.log('All calculators done');
-
-			// showToast('All calculators done');
 		}
 
 		async calculate(args: any) {
