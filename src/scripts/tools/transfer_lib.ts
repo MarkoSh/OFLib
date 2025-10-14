@@ -1,6 +1,6 @@
-const listId = 0;
-
 window.injected.push(async (OFLib: any) => {
+	const listId = 0;
+
 	const url: any = new URL(location.href);
 
 	if (!url.hashParams.has('transfer')) return;
