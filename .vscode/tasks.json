@@ -1,0 +1,44 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Build",
+			"type": "shell",
+			"command": "npx",
+			"args": ["tsc", "-p", "tsconfig.json"],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"problemMatcher": ["$tsc"],
+			"presentation": {
+				"reveal": "always",
+				"panel": "shared",
+				"clear": true
+			},
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"dependsOn": [
+				"Copy"
+			]
+		},
+		{
+			"label": "Copy",
+			"type": "shell",
+			"command": "cp -r src/vendor/ src/manifest.json build/ && cp -r src/img build/"
+		},
+		{
+			"label": "Watch",
+			"type": "shell",
+			"command": "npx",
+			"args": ["tsc", "-w", "-p", "tsconfig.json"],
+			"isBackground": true,
+			"problemMatcher": ["$tsc-watch"],
+			"group": "build",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			}
+		}
+	]
+}

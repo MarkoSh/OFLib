@@ -1,0 +1,53 @@
+{
+	"manifest_version": 3,
+	"name": "OFLib",
+	"short_name": "oflib",
+	"version": "2.0.0",
+	"description": "OFLib",
+	"background": {
+		"service_worker": "scripts/background.js",
+		"type": "module"
+	},
+	"action": {
+		"default_title": "OFLib",
+		"default_icon": "img/icon.png"
+	},
+	"icons": {
+		"16": "img/icon.png",
+		"32": "img/icon.png",
+		"48": "img/icon.png",
+		"96": "img/icon.png"
+	},
+	"content_scripts": [
+		{
+			"js": [
+				"scripts/content.js"
+			],
+			"matches": [
+				"*://onlyfans.com/*"
+			],
+			"run_at": "document_start",
+			"all_frames": true
+		}
+	],
+	"web_accessible_resources": [
+		{
+			"resources": [
+				"htmls/*",
+				"vendor/*",
+				"scripts/*",
+				"css/*"
+			],
+			"matches": [
+				"*://onlyfans.com/*"
+			]
+		}
+	],
+	"permissions": [
+		"userScripts"
+	],
+	"host_permissions": [
+		"*://onlyfans.com/*",
+		"<all_urls>"
+	]
+}
