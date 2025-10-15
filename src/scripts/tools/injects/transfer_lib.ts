@@ -40,7 +40,15 @@ window.injected.push(async (OFLib: any) => {
 
 	const params = {
 		more: false,
-		offset: 0,
+		offset: (() => {
+			const item = localStorage.getItem('transferOffset');
+
+			if (item) {
+				return parseInt(item);
+			}
+
+			return 0;
+		})(),
 		query: '',
 		type: 'all'
 	};
@@ -110,6 +118,8 @@ window.injected.push(async (OFLib: any) => {
 
 			params.offset += list.length;
 			params.more = true;
+
+			localStorage.setItem('transferOffset', String(params.offset));
 
 			if (!hasMore) {
 				return;

@@ -432,7 +432,8 @@ window.injected.push((OFLib: any) => {
 
 						console.log(`Promotion ${promotion.promotionId} parsing... offset ${params.offset} stored`);
 
-						params.offset += list.length;
+						// params.offset += list.length;
+						params.offset += 10;
 						params.more = true;
 
 						$this.settings.promotions[promotion.promotionId].offset = params.offset;
@@ -627,7 +628,8 @@ window.injected.push((OFLib: any) => {
 
 						console.log(`Campaign ${campaign.campaignId} parsing... offset ${params.offset} stored`);
 
-						params.offset += list.length;
+						// params.offset += list.length;
+						params.offset += 10
 						params.more = true;
 
 						$this.settings.campaigns[campaign.campaignId].offset = params.offset;
@@ -816,7 +818,8 @@ window.injected.push((OFLib: any) => {
 
 						console.log(`Trial ${trial.trialId} parsing... offset ${params.offset} stored`);
 
-						params.offset += list.length;
+						// params.offset += list.length;
+						params.offset += 10;
 						params.more = true;
 
 						$this.settings.trials[trial.trialId].offset = params.offset;
