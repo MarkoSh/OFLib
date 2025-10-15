@@ -488,7 +488,7 @@ window.injected.push((OFLib: any) => {
 					id: campaign.campaignId,
 					offset,
 					// limit: $this.limit,
-					limit: 10,
+					limit: 100,
 					more: offset ? true : false,
 				};
 
@@ -629,7 +629,7 @@ window.injected.push((OFLib: any) => {
 						console.log(`Campaign ${campaign.campaignId} parsing... offset ${params.offset} stored`);
 
 						// params.offset += list.length;
-						params.offset += 10
+						params.offset += 100;
 						params.more = true;
 
 						$this.settings.campaigns[campaign.campaignId].offset = params.offset;
