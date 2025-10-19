@@ -1,4 +1,8 @@
 window.injected.push(async (OFLib: any) => {
+	const url: any = new URL(location.href);
+
+	if (!url.hashParams.has('chats')) return;
+
 	console.log('Tools');
 
 	const priorityUsers: any = await OFLib.fetchChats({

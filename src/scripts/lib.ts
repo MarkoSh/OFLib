@@ -268,6 +268,36 @@
 			});
 		}
 
+		fetchEarnings(params: any) {
+			const $this = this;
+
+			return new Promise((resolve, reject) => {
+				const observer = async () => {
+					try {
+						const { fetchEarnings } = $this.actions.statements;
+
+						const response = await fetchEarnings(params);
+
+						const state = $this.getState();
+
+						const { statements } = state;
+
+						const { earnings, earningsMarker } = statements;
+
+						resolve(earnings);
+
+						return;
+					} catch (error: any) {
+						console.error(error);
+					}
+
+					new setTimeoutExt(observer, 100);
+				}
+
+				observer();
+			});
+		}
+
 		fetchChats(params: any) {
 			const $this = this;
 
@@ -373,7 +403,9 @@
 
 			const state = $this.getState();
 
-			const { chats, subscribers, subscribes, users } = state;
+			const { statements, chats, subscribers, subscribes, users } = state;
+
+			statements.earnings = [];
 
 			const { messages, messagesHasMore } = chats;
 
