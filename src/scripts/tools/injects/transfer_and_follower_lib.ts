@@ -304,6 +304,120 @@ const follower = async (OFLib: any) => {
 
 	if (!url.hashParams.has('follower')) return;
 
+	await new Promise((resolve, reject) => {
+		const params = {
+			limit: 100,
+			more: false,
+		};
+
+		const processed = {};
+
+		let followed = 0;
+
+		const observer = async () => {
+			try {
+				const response = await queue.add(async () => await OFLib.fetchEarnings(params));
+
+				if (response.length && 1000 > Object.keys(processed).length) {
+					const lastTransaction = response[0];
+
+					const { createdAt } = lastTransaction;
+
+					console.log(`Current transaction date: ${new Date(createdAt)}`);
+
+					const filtered = [...new Set(response.filter((transaction: any) => {
+						const { user } = transaction;
+
+						const { id: userId } = user;
+
+						if (!processed[userId]) {
+							return true;
+						}
+
+						return false;
+					}).map((transaction: any) => {
+						const { user } = transaction;
+
+						const { id: userId } = user;
+
+						return userId;
+					}))];
+
+					for (let i = 0; i < filtered.length; i += 20) {
+						const chunk = filtered.slice(i, i + 20);
+
+						const response = await queue.add(async () => await OFLib.getUsersByIds({
+							ids: {
+								f: chunk,
+							}
+						}));
+
+						let lastActivityDate: Date | any = false;
+
+						const filtered_ = Object.values(response).filter((user: any) => {
+							const { subscribedOnData } = user;
+
+							if (subscribedOnData) return 1;
+
+							return 0;
+						}).filter((user: any) => {
+							const {
+								lastSeen,
+								canAddSubscriber,
+								subscribePrice,
+								subscribedBy,
+								subscribedOnData,
+							} = user;
+
+							const { lastActivity } = subscribedOnData;
+
+							const userLastActivityDate = new Date(lastSeen || lastActivity);
+
+							lastActivityDate = lastActivityDate ? userLastActivityDate > lastActivityDate ? userLastActivityDate : lastActivityDate : userLastActivityDate;
+
+							return canAddSubscriber && !subscribePrice && !subscribedBy;
+
+							return 0;
+						}).map((user: any) => user.id);
+
+						console.log(`Ready for following ${filtered_.length}...`);
+
+						for (let i = 0; i < filtered_.length; i++) {
+							const userId = filtered_[i];
+
+							const result = await OFLib.doSubscribe(userId);
+
+							followed++;
+
+							console.log(`Followed user ${userId}, followed total ${followed}`);
+						}
+
+						Object.keys(response).map((userId: any) => {
+							processed[userId] = true;
+						});
+
+						console.log(`Last activity: ${new Date(createdAt)}, followed total ${followed}`);
+					}
+
+					console.log(`Processed active spenders ${Object.keys(processed).length}`);
+
+					OFLib.cleaning();
+
+					params.more = true;
+				} else {
+					resolve(true);
+
+					return;
+				}
+			} catch (error: any) {
+				console.error(error);
+			}
+
+			new setTimeoutExt(observer, 100);
+		};
+		observer();
+	});
+
 	await new Promise(async (resolve, reject) => {
 		const { saveUsersListOrder } = OFLib.actions.usersLists;
 
