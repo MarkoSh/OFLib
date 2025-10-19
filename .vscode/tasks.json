@@ -1,8 +1,7 @@
 {
 	"version": "2.0.0",
-	"tasks": [
-		{
-			"label": "Build",
+	"tasks": [{
+			"label": "Build TSC",
 			"type": "shell",
 			"command": "npx",
 			"args": ["tsc", "-p", "tsconfig.json"],
@@ -36,16 +35,42 @@
 			"command": "cp -r src/vendor/ src/manifest.json build/ && cp -r src/img build/"
 		},
 		{
-			"label": "Watch",
+			"label": "Watch TSC",
 			"type": "shell",
 			"command": "npx",
 			"args": ["tsc", "-w", "-p", "tsconfig.json"],
 			"isBackground": true,
 			"problemMatcher": ["$tsc-watch"],
-			"group": "build",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
 			"options": {
 				"cwd": "${workspaceFolder}"
 			}
+		},
+		{
+			"label": "Build SASS",
+			"type": "shell",
+			"command": "sass src/scss/style.scss:build/css/style.css",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"dependsOrder": "sequence",
+			"dependsOn": [
+				"Build TSC"
+			]
+		},
+		{
+			"label": "Watch SASS",
+			"type": "shell",
+			"isBackground": true,
+			"command": "sass --watch src/scss/style.scss:build/css/style.css",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
 		}
 	]
 }
