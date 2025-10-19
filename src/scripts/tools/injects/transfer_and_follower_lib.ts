@@ -305,6 +305,118 @@ const follower = async (OFLib: any) => {
 	if (!url.hashParams.has('follower')) return;
 
 	await new Promise(async (resolve, reject) => {
+		const { saveUsersListOrder } = OFLib.actions.usersLists;
+
+		{
+			const params = {
+				listId: 'fans',
+				data: {
+					// order: "subscribe_date",
+					order: "last_activity",
+					direction: "desc",
+					type: "all"
+				}
+			};
+
+			const sorted = await new Promise((resolve, reject) => {
+				const observer = async () => {
+					try {
+						await saveUsersListOrder(params);
+
+						resolve(true);
+
+						return;
+					} catch (error: any) {
+						console.error(error);
+					}
+
+					new setTimeoutExt(observer, 100);
+				};
+				observer();
+			});
+		}
+
+		const { fetchSubscribers } = OFLib.actions.subscribers;
+
+		const params = {
+			more: false,
+			offset: 0,
+			query: '',
+			type: 'active'
+		};
+
+		let followed = 0;
+
+		const observer = async () => {
+			try {
+				const response = await queue.add(async () => await fetchSubscribers(params));
+
+				const { list, hasMore } = response;
+
+				let lastActivityDate: Date | any = false;
+
+				const filtered = list.filter((user: any) => {
+					const { subscribedOnData } = user;
+
+					if (subscribedOnData) return 1;
+
+					return 0;
+				}).filter((user: any) => {
+					const {
+						lastSeen,
+						canAddSubscriber,
+						subscribePrice,
+						subscribedBy,
+						subscribedOnData,
+						subscribedOnExpiredNow
+					} = user;
+
+					const { lastActivity } = subscribedOnData;
+
+					const userLastActivityDate = new Date(lastSeen || lastActivity);
+
+					lastActivityDate = lastActivityDate ? userLastActivityDate > lastActivityDate ? userLastActivityDate : lastActivityDate : userLastActivityDate;
+
+					return canAddSubscriber && !subscribePrice && !subscribedBy;
+
+					return 0;
+				}).map((user: any) => user.id);
+
+				console.log(`Ready for following ${filtered.length}...offset ${params.offset}`);
+
+				for (let i = 0; i < filtered.length; i++) {
+					const userId = filtered[i];
+
+					const result = await OFLib.doSubscribe(userId);
+
+					followed++;
+
+					console.log(`Followed user ${userId}, followed total ${followed}`);
+				}
+
+				console.log(`Last activity: ${lastActivityDate}, followed total ${followed}`);
+
+				OFLib.cleaning();
+
+				params.offset += 10;
+				params.more = true;
+
+				if (!hasMore) {
+					resolve(true);
+
+					return;
+				}
+			} catch (error: any) {
+				console.error(error);
+			}
+
+			new setTimeoutExt(observer, 100);
+		};
+
+		observer();
+	});
+
+	await new Promise(async (resolve, reject) => {
 		const {
 			saveUsersListOrder,
 		} = OFLib.actions.usersLists;
@@ -401,118 +513,6 @@ const follower = async (OFLib: any) => {
 				params.more = true;
 
 				if (!usersLists.hasMore) {
-					resolve(true);
-
-					return;
-				}
-			} catch (error: any) {
-				console.error(error);
-			}
-
-			new setTimeoutExt(observer, 100);
-		};
-
-		observer();
-	});
-
-	await new Promise(async (resolve, reject) => {
-		const { saveUsersListOrder } = OFLib.actions.usersLists;
-
-		{
-			const params = {
-				listId: 'fans',
-				data: {
-					// order: "subscribe_date",
-					order: "last_activity",
-					direction: "desc",
-					type: "all"
-				}
-			};
-
-			const sorted = await new Promise((resolve, reject) => {
-				const observer = async () => {
-					try {
-						await saveUsersListOrder(params);
-
-						resolve(true);
-
-						return;
-					} catch (error: any) {
-						console.error(error);
-					}
-
-					new setTimeoutExt(observer, 100);
-				};
-				observer();
-			});
-		}
-
-		const { fetchSubscribers } = OFLib.actions.subscribers;
-
-		const params = {
-			more: false,
-			offset: 4900,
-			query: '',
-			type: 'active'
-		};
-
-		let followed = 0;
-
-		const observer = async () => {
-			try {
-				const response = await queue.add(async () => await fetchSubscribers(params));
-
-				const { list, hasMore } = response;
-
-				let lastActivityDate: Date | any = false;
-
-				const filtered = list.filter((user: any) => {
-					const { subscribedOnData } = user;
-
-					if (subscribedOnData) return 1;
-
-					return 0;
-				}).filter((user: any) => {
-					const {
-						lastSeen,
-						canAddSubscriber,
-						subscribePrice,
-						subscribedBy,
-						subscribedOnData,
-						subscribedOnExpiredNow
-					} = user;
-
-					const { lastActivity } = subscribedOnData;
-
-					const userLastActivityDate = new Date(lastSeen || lastActivity);
-
-					lastActivityDate = lastActivityDate ? userLastActivityDate > lastActivityDate ? userLastActivityDate : lastActivityDate : userLastActivityDate;
-
-					return canAddSubscriber && !subscribePrice && !subscribedBy;
-
-					return 0;
-				}).map((user: any) => user.id);
-
-				console.log(`Ready for following ${filtered.length}...offset ${params.offset}`);
-
-				for (let i = 0; i < filtered.length; i++) {
-					const userId = filtered[i];
-
-					const result = await OFLib.doSubscribe(userId);
-
-					followed++;
-
-					console.log(`Followed user ${userId}, followed total ${followed}`);
-				}
-
-				console.log(`Last activity: ${lastActivityDate}, followed total ${followed}`);
-
-				OFLib.cleaning();
-
-				params.offset += 10;
-				params.more = true;
-
-				if (!hasMore) {
 					resolve(true);
 
 					return;
