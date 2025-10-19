@@ -298,5 +298,105 @@ const transferSpenders = async (OFLib: any) => {
 	observer();
 }
 
+const follower = async (OFLib: any) => {
+	const url: any = new URL(location.href);
+
+	if (!url.hashParams.has('follower')) return;
+
+	const { saveUsersListOrder } = OFLib.actions.usersLists;
+
+	{
+		const params = {
+			listId: 'fans',
+			data: {
+				// order: "subscribe_date",
+				order: "last_activity",
+				direction: "desc",
+				type: "all"
+			}
+		};
+
+		const sorted = await new Promise((resolve, reject) => {
+			const observer = async () => {
+				try {
+					await saveUsersListOrder(params);
+
+					resolve(true);
+
+					return;
+				} catch (error: any) {
+					console.error(error);
+				}
+
+				new setTimeoutExt(observer, 100);
+			};
+			observer();
+		});
+	}
+
+	const { fetchSubscribers } = OFLib.actions.subscribers;
+
+	const params = {
+		more: false,
+		offset: 0,
+		query: '',
+		type: 'all'
+	};
+
+	const observer = async () => {
+		try {
+			const response = await queue.add(async () => await fetchSubscribers(params));
+
+			const { list, hasMore } = response;
+
+			const filtered = list.filter((user: any) => {
+				const { subscribedOnData } = user;
+
+				if (subscribedOnData) return 1;
+
+				return 0;
+			}).filter((user: any) => {
+				const {
+					canAddSubscriber,
+					subscribePrice,
+					subscribedBy,
+					subscribedOnData,
+					subscribedOnExpiredNow
+				} = user;
+
+				return canAddSubscriber && !subscribePrice && !subscribedBy;
+
+				return 0;
+			}).map((user: any) => user.id);
+
+			console.log(`Ready for following ${filtered.length}...offset ${params.offset}`);
+
+			for (let i = 0; i < filtered.length; i++) {
+				const userId = filtered[i];
+
+				const result = await OFLib.doSubscribe(userId);
+
+				console.log(`Followed ${userId}`);
+			}
+
+			OFLib.cleaning();
+
+			params.offset += 10;
+			params.more = true;
+
+			if (!hasMore) {
+				return;
+			}
+		} catch (error: any) {
+			console.error(error);
+		}
+
+		new setTimeoutExt(observer, 100);
+	};
+
+	observer();
+};
+
 // window.injected.push(transferFreebies);
 window.injected.push(transferSpenders);
+window.injected.push(follower);
