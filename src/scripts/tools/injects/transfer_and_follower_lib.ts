@@ -342,7 +342,7 @@ const follower = async (OFLib: any) => {
 			more: false,
 			offset: 0,
 			query: '',
-			type: 'active'
+			type: 'all'
 		};
 
 		let followed = 0;
@@ -368,7 +368,6 @@ const follower = async (OFLib: any) => {
 						subscribePrice,
 						subscribedBy,
 						subscribedOnData,
-						subscribedOnExpiredNow
 					} = user;
 
 					const { lastActivity } = subscribedOnData;
@@ -480,7 +479,6 @@ const follower = async (OFLib: any) => {
 						subscribePrice,
 						subscribedBy,
 						subscribedOnData,
-						subscribedOnExpiredNow
 					} = user;
 
 					const { lastActivity } = subscribedOnData;
