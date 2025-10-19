@@ -21,6 +21,8 @@ window.injected.push(async (OFLib: any) => {
 		delete users[userId];
 	});
 
+	console.log(`Shows only users not in priority`);
+
 	const rows = Object.keys(users).map((userId: any) => {
 		return `https://onlyfans.com/my/chats/chat/${userId}/?q=Usename`;
 	}).join("\n");

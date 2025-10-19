@@ -3,12 +3,12 @@
 
 	window.URL = new Proxy(URL, {
 		construct(target, args: [string]) {
-			const url: any = new target(...args);
+			const url: URL = new target(...args);
 
 			const hashString = url.hash.startsWith('#') ? url.hash.slice(1) : url.hash;
 			url.hashParams = new URLSearchParams(hashString);
 
-			url.pathSegments = url.pathname.split('/').filter((segment: any) => segment.length > 0);
+			url.pathSegments = url.pathname.split('/').filter((segment: string) => segment.length > 0);
 
 			return url;
 		}
@@ -22,9 +22,11 @@
 		}
 
 		async add(fn: any) {
-			this.queue = this.queue.then(fn, fn);
+			const $this = this;
 
-			return this.queue;
+			$this.queue = $this.queue.then(fn, fn);
+
+			return $this.queue;
 		}
 	}
 
@@ -268,6 +270,36 @@
 			});
 		}
 
+		fetchEarnings(params: any) {
+			const $this = this;
+
+			return new Promise((resolve, reject) => {
+				const observer = async () => {
+					try {
+						const { fetchEarnings } = $this.actions.statements;
+
+						const response = await fetchEarnings(params);
+
+						const state = $this.getState();
+
+						const { statements } = state;
+
+						const { earnings, earningsMarker } = statements;
+
+						resolve(earnings);
+
+						return;
+					} catch (error: any) {
+						console.error(error);
+					}
+
+					new setTimeoutExt(observer, 100);
+				}
+
+				observer();
+			});
+		}
+
 		fetchChats(params: any) {
 			const $this = this;
 
@@ -373,7 +405,9 @@
 
 			const state = $this.getState();
 
-			const { chats, subscribers, subscribes, users } = state;
+			const { statements, chats, subscribers, subscribes, users } = state;
+
+			statements.earnings = [];
 
 			const { messages, messagesHasMore } = chats;
 
