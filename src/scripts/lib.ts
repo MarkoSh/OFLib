@@ -300,6 +300,48 @@
 			});
 		}
 
+		fetchUsersListUsers(params: any) {
+			const $this = this;
+
+			return new Promise((resolve, reject) => {
+				const observer = async () => {
+					try {
+						const { fetchUsersListUsers } = $this.actions.usersLists;
+
+						const response = await await fetchUsersListUsers(params);
+
+						const state = $this.getState();
+
+						const { users: users_, subscribers: subscribers_, usersLists } = state;
+
+						const { items: users } = users_;
+						const { items: subscribers } = subscribers_;
+
+						const result = {};
+
+						response.map((userId: any) => {
+							const user = users[userId];
+							const subscribedOnData = subscribers[userId];
+
+							if (user && subscribedOnData) {
+								user['subscribedOnData'] = subscribedOnData;
+
+								result[userId] = user;
+							}
+						});
+
+						resolve(result);
+
+						return;
+					} catch (error: any) {
+					}
+
+					new setTimeoutExt(observer, 100);
+				}
+				observer();
+			});
+		}
+
 		fetchChats(params: any) {
 			const $this = this;
 
