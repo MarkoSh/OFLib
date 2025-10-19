@@ -1,7 +1,13 @@
+import {Handler as CalcHandler} from './tools/backgrounds/calc_background.js';
+
 const handlers: any[] = [
+	CalcHandler
 ];
 
 const scripts: any[] = [
+	'tools/injects/calc_lib.js',
+	'tools/injects/chats_lib.js',
+	'tools/injects/transfer_and_follower_lib.js',
 ];
 
 const external: any[] = [
@@ -59,25 +65,6 @@ import PocketBase from '../vendor/pocketbase.es.mjs';
 							allFrames: true,
 						}]);
 					}
-				})();
-			}
-
-			{
-				(async () => {
-					const response = await fetch(chrome.runtime.getURL('css/style.css'));
-
-					const code = await response.text();
-
-					chrome.userScripts.register([{
-						id: 'OFLibInject3',
-						js: [{
-							code: `console.log('CSS'); debugger; document.head.innerHTML += '<style type="text/css">${code}</style>'`,
-						}],
-						runAt: 'document_start',
-						world: 'MAIN',
-						matches: ['*://onlyfans.com/*'],
-						allFrames: true,
-					}]);
 				})();
 			}
 

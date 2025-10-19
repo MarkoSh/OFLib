@@ -358,6 +358,20 @@
 			});
 		}
 
+		doSubscribe(userId: number) {
+			const $this = this;
+
+			return new Promise(async (resolve, reject) => {
+				const { vue, exec: doSubscribe } = $this.functions.doSubscribe;
+
+				vue.user.id = userId;
+
+				const response = await queue.add(async () => await doSubscribe());
+
+				resolve(userId);
+			});
+		}
+
 		async init() {
 			const $this = this;
 
