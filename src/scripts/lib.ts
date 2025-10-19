@@ -3,12 +3,12 @@
 
 	window.URL = new Proxy(URL, {
 		construct(target, args: [string]) {
-			const url: any = new target(...args);
+			const url: URL = new target(...args);
 
 			const hashString = url.hash.startsWith('#') ? url.hash.slice(1) : url.hash;
 			url.hashParams = new URLSearchParams(hashString);
 
-			url.pathSegments = url.pathname.split('/').filter((segment: any) => segment.length > 0);
+			url.pathSegments = url.pathname.split('/').filter((segment: string) => segment.length > 0);
 
 			return url;
 		}
@@ -22,9 +22,11 @@
 		}
 
 		async add(fn: any) {
-			this.queue = this.queue.then(fn, fn);
+			const $this = this;
 
-			return this.queue;
+			$this.queue = $this.queue.then(fn, fn);
+
+			return $this.queue;
 		}
 	}
 
