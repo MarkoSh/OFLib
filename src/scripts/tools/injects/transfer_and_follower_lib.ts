@@ -304,15 +304,15 @@ const follower = async (OFLib: any) => {
 
 	if (!url.hashParams.has('follower')) return;
 
+	let followed = 0;
+
+	const processed = {};
+
 	await new Promise((resolve, reject) => {
 		const params = {
 			limit: 100,
 			more: false,
 		};
-
-		const processed = {};
-
-		let followed = 0;
 
 		const observer = async () => {
 			try {
@@ -459,8 +459,6 @@ const follower = async (OFLib: any) => {
 			type: 'all'
 		};
 
-		let followed = 0;
-
 		const observer = async () => {
 			try {
 				const response = await queue.add(async () => await fetchSubscribers(params));
@@ -470,7 +468,11 @@ const follower = async (OFLib: any) => {
 				let lastActivityDate: Date | any = false;
 
 				const filtered = list.filter((user: any) => {
-					const { subscribedOnData } = user;
+					const { id: userId, subscribedOnData } = user;
+
+					if (!processed[userId]) {
+						return true;
+					}
 
 					if (subscribedOnData) return 1;
 
@@ -506,6 +508,10 @@ const follower = async (OFLib: any) => {
 
 					console.log(`Followed user ${userId}, followed total ${followed}`);
 				}
+
+				filtered.map((userId: any) => {
+					processed[userId] = true;
+				});
 
 				console.log(`Last activity: ${lastActivityDate}, followed total ${followed}`);
 
@@ -568,8 +574,6 @@ const follower = async (OFLib: any) => {
 			more: false,
 		};
 
-		let followed = 0;
-
 		const observer = async () => {
 			try {
 				const state = OFLib.getState();
@@ -581,7 +585,11 @@ const follower = async (OFLib: any) => {
 				let lastActivityDate: Date | any = false;
 
 				const filtered = Object.values(response).filter((user: any) => {
-					const { subscribedOnData } = user;
+					const { id: userId, subscribedOnData } = user;
+
+					if (!processed[userId]) {
+						return true;
+					}
 
 					if (subscribedOnData) return 1;
 
@@ -617,6 +625,10 @@ const follower = async (OFLib: any) => {
 
 					console.log(`Followed user ${userId}, followed total ${followed}`);
 				}
+
+				filtered.map((userId: any) => {
+					processed[userId] = true;
+				});
 
 				console.log(`Last activity: ${lastActivityDate}, followed total ${followed}`);
 
