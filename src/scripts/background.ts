@@ -1,13 +1,7 @@
-import {Handler as CalcHandler} from './tools/backgrounds/calc_background.js';
-
 const handlers: any[] = [
-	CalcHandler
 ];
 
 const scripts: any[] = [
-	'tools/injects/calc_lib.js',
-	'tools/injects/chats_lib.js',
-	'tools/injects/transfer_and_follower_lib.js',
 ];
 
 const external: any[] = [
