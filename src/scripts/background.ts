@@ -2,6 +2,12 @@ const handlers: any[] = [
 ];
 
 const scripts: any[] = [
+<<<<<<< HEAD
+=======
+	'tools/injects/calc_lib.js',
+	'tools/injects/transfer_lib.js',
+	// 'tools/injects/tools_lib.js',
+>>>>>>> parent of 53a6178 (Typo)
 ];
 
 const external: any[] = [
@@ -59,6 +65,25 @@ import PocketBase from '../vendor/pocketbase.es.mjs';
 							allFrames: true,
 						}]);
 					}
+				})();
+			}
+
+			{
+				(async () => {
+					const response = await fetch(chrome.runtime.getURL('css/style.css'));
+
+					const code = await response.text();
+
+					chrome.userScripts.register([{
+						id: 'OFLibInject3',
+						js: [{
+							code: `console.log('CSS'); debugger; document.head.innerHTML += '<style type="text/css">${code}</style>'`,
+						}],
+						runAt: 'document_start',
+						world: 'MAIN',
+						matches: ['*://onlyfans.com/*'],
+						allFrames: true,
+					}]);
 				})();
 			}
 
