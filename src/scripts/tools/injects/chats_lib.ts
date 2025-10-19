@@ -21,11 +21,23 @@ window.injected.push(async (OFLib: any) => {
 		delete users[userId];
 	});
 
-	console.log(`Shows only users not in priority`);
+	{
+		console.log(`Shows only users in priority`);
 
-	const rows = Object.keys(users).map((userId: any) => {
-		return `https://onlyfans.com/my/chats/chat/${userId}/?q=Usename`;
-	}).join("\n");
+		const rows = Object.keys(priorityUsers).map((userId: any) => {
+			return `https://onlyfans.com/my/chats/chat/${userId}/?q=Usename`;
+		}).join("\n");
 
-	console.log(rows);
+		console.log(rows);
+	}
+
+	{
+		console.log(`Shows only users not in priority`);
+
+		const rows = Object.keys(users).map((userId: any) => {
+			return `https://onlyfans.com/my/chats/chat/${userId}/?q=Usename`;
+		}).join("\n");
+
+		console.log(rows);
+	}
 });
