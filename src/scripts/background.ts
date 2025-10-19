@@ -2,6 +2,12 @@ const handlers: any[] = [
 ];
 
 const scripts: any[] = [
+<<<<<<< HEAD
+=======
+	'tools/injects/calc_lib.js',
+	'tools/injects/transfer_lib.js',
+	// 'tools/injects/tools_lib.js',
+>>>>>>> parent of 53a6178 (Typo)
 ];
 
 const external: any[] = [
