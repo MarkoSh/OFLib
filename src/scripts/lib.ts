@@ -489,6 +489,49 @@
 			});
 		}
 
+		fetchUserPosts(params: any = {
+			id: this.model.userId,
+			limit: 50,
+			more: false,
+			beforePublishTime: undefined,
+		}) {
+			const $this = this;
+
+			return new Promise((resolve, reject) => {
+				const { fetchUserPosts } = $this.actions.posts;
+
+				const observer = async () => {
+					try {
+						const response = await queue.add(async () => await fetchUserPosts(params));
+
+						const state = $this.getState();
+
+						const { posts } = state;
+
+						const { beforePublishTime, hasMore } = posts;
+
+						const { posts: postsHasMore } = hasMore;
+
+						const ts = parseInt(`${beforePublishTime.split('.')[0]}000`);
+
+						resolve({
+							list: response,
+							hasMore: postsHasMore,
+							beforePublishTime,
+						});
+
+						return;
+					} catch (error: any) {
+						console.error(error);
+					}
+
+					new setTimeoutExt(observer, 100);
+				};
+
+				observer();
+			});
+		}
+
 		doSubscribe(userId: number) {
 			const $this = this;
 
