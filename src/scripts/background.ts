@@ -1,23 +1,35 @@
+import { Worker } from './tools/backgrounds/worker_bg.js'
+
 const handlers: any[] = [
+	Worker
 ];
 
 const scripts: any[] = [
+	'tools/injects/worker.js'
 ];
 
 const external: any[] = [
 ];
 
-import PocketBase from '../vendor/pocketbase.es.mjs';
+URL = new Proxy(URL, {
+	construct(target, args: [string]) {
+		const url: URL = new target(...args);
+
+		const hashString = url.hash.startsWith('#') ? url.hash.slice(1) : url.hash;
+		url.hashParams = new URLSearchParams(hashString);
+
+		url.pathSegments = url.pathname.split('/').filter((segment: string) => segment.length > 0);
+
+		return url;
+	}
+});
 
 (async () => {
 	class OFLibBackground {
-		pb = new PocketBase('http://127.0.0.1:8090');
 		handlers: any[] = [];
 
 		constructor() {
 			const $this = this;
-
-			$this.pb.collection("_superusers").authWithPassword('markhost@yandex.ru', '123123123123');
 
 			(async () => {
 				{
