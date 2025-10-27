@@ -18,14 +18,12 @@ const setMeToStream = async (OFLib: any) => {
 		excludedSubscribers: [],
 		usersCount: null,
 		excludeListIds: [
-			1217119850,
-			1217078201,
+			1235624356,
+			1235624373,
 		],
 		subscribersIds: [
-			3423234
 		],
 		manuallyCheckedUserIds: [
-			3423234
 		],
 	});
 
