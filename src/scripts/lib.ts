@@ -646,7 +646,10 @@
 
 			const state = $this.getState();
 
-			const { statements, chats, subscribers, subscribes, users } = state;
+			const { statements, chats, subscribers, subscribes, users, posts } = state;
+
+			posts.itemIds = [];
+			posts.items = {};
 
 			statements.earnings = [];
 
