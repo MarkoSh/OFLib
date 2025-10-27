@@ -308,7 +308,7 @@
 					try {
 						const { fetchUsersListUsers } = $this.actions.usersLists;
 
-						const response = await await fetchUsersListUsers(params);
+						const response = await fetchUsersListUsers(params);
 
 						const state = $this.getState();
 
@@ -338,6 +338,41 @@
 
 					new setTimeoutExt(observer, 100);
 				}
+				observer();
+			});
+		}
+
+		fetchNotifications(params: any) {
+			const $this = this;
+
+			return new Promise((resolve, reject) => {
+				const observer = async () => {
+					try {
+						const {fetchNotifications} = $this.actions.users;
+
+						const response = await fetchNotifications(params);
+
+						const {hasMore} = response;
+
+						const state = $this.getState();
+
+						const {users} = state;
+
+						const {notifications} = users;
+
+						resolve({
+							hasMore,
+							notifications,
+						});
+
+						return;
+					} catch (error: any) {
+						console.error(error);
+					}
+
+					new setTimeoutExt(observer, 100);
+				};
+
 				observer();
 			});
 		}
