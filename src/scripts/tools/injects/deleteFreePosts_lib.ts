@@ -5,31 +5,25 @@ const deleteFreePosts = (OFLib: any) => {
 
 	const { id: userId } = OFLib.model;
 
-	const { fetchUserPosts, deletePost } = OFLib.actions.posts;
-
 	const params = {
-		id: userId,
-		limit: 50,
-		more: false,
 		beforePublishTime: undefined,
+		more: false,
 	};
 
 	const observer = async () => {
-		const response = await fetchUserPosts(params);
+		const response = await OFLib.fetchUserPosts(params);
 
-		const state = OFLib.getState();
-
-		const { posts } = state;
-
-		const { items, beforePublishTime, hasMore } = posts;
-
-		const { posts: postsHasMore } = hasMore;
+		const {
+			list,
+			hasMore,
+			beforePublishTime,
+		} = response;
 
 		const ts = parseInt(`${beforePublishTime.split('.')[0]}000`);
 
 		const beforePublishTimeDate = new Date(ts);
 
-		const freePosts: any[] = Object.values(items).filter((post: any) => {
+		const freePosts: any[] = list.filter((post: any) => {
 			const { isPinned, price, text } = post;
 
 			const el = document.createElement('div');
@@ -51,9 +45,6 @@ const deleteFreePosts = (OFLib: any) => {
 
 		console.log(`Found posts ${freePosts.length}`);
 
-		posts.itemIds = [];
-		posts.items = {};
-
 		OFLib.cleaning();
 
 		console.log(`Current date position ${beforePublishTimeDate}`);
@@ -66,7 +57,7 @@ const deleteFreePosts = (OFLib: any) => {
 			await new Promise((resolve, reject) => {
 				const observer = async () => {
 					try {
-						const response = await deletePost(postId);
+						const response = await OFLib.deletePost(postId);
 
 						resolve(response);
 
@@ -87,7 +78,7 @@ const deleteFreePosts = (OFLib: any) => {
 		params.beforePublishTime = beforePublishTime;
 		params.more = true;
 
-		if (!postsHasMore) {
+		if (!hasMore) {
 			console.log(`All done`);
 
 			return;

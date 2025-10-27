@@ -489,6 +489,30 @@
 			});
 		}
 
+		deletePost(postId: number) {
+			const $this = this;
+
+			return new Promise((resolve, reject) => {
+				const { deletePost } = $this.actions.posts;
+
+				const observer = async () => {
+					try {
+						const response = await deletePost(postId);
+
+						resolve(response);
+
+						return;
+					} catch (error: any) {
+						console.error(error);
+					}
+
+					new setTimeoutExt(observer, 100);
+				};
+
+				observer();
+			});
+		}
+
 		fetchUserPosts(params: any = {
 			id: this.model.userId,
 			limit: 50,
