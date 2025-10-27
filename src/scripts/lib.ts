@@ -621,11 +621,13 @@
 
 				const state = $this.getState();
 
-				const { auth, users } = state;
+				const { init, auth, users } = state;
 
-				const { isLogin, user: userId } = auth;
+				const {isAuth} = init;
 
-				if (isLogin) {
+				const { user: userId } = auth;
+
+				if (isAuth && userId) {
 					const { items } = users;
 
 					const user = items[userId];
