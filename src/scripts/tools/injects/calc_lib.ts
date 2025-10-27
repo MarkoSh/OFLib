@@ -118,6 +118,12 @@ window.injected.push((OFLib: any) => {
 
 				$this.chats = chats;
 
+				$this.fetchUpdates({
+					promotions,
+					campaigns,
+					trials
+				});
+
 				await $this.calculate({
 					promotions,
 					campaigns,
@@ -126,6 +132,78 @@ window.injected.push((OFLib: any) => {
 			} else { }
 
 			console.log('All calculators done');
+		}
+
+		async fetchUpdates(args: any) {
+			const $this = this;
+
+			return;
+
+			const {
+				promotions,
+				campaigns,
+				trials
+			} = args;
+
+			$this.chats = await OFLib.fetchChats({
+				filter: 'priority',
+				limit: 10,
+				more: false,
+			});
+
+			const params = {
+				type: 'subscribed',
+				more: false,
+			};
+
+			const processed = {};
+
+			const observer = async () => {
+				const response = await queue.add(async () => await OFLib.fetchNotifications(params));
+
+				const {
+					hasMore,
+					notifications,
+				} = response;
+
+				const usersIds = notifications.filter((notification: any) => {
+					const { user, type } = notification;
+
+					const { id: userId } = user;
+
+					if (processed[userId]) return false;
+
+					if ('subscribed' == type) return true;
+
+					return false;
+				}).map((notification: any) => {
+					const { user } = notification;
+
+					const { id: userId } = user;
+
+					return userId;
+				});
+
+				const users = await OFLib.getUsersByIds({
+					ids: {
+						f: usersIds,
+					}
+				});
+
+				usersIds.map((userId: any) => {
+					processed[userId] = true;
+				});
+
+				params.more = true;
+
+				if (!hasMore || 100 < notifications.length) {
+					return;
+				}
+
+				new setTimeoutExt(observer, 100);
+			};
+
+			observer();
 		}
 
 		async calculate(args: any) {

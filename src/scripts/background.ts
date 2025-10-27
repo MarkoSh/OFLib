@@ -1,4 +1,4 @@
-import {Handler as CalcHandler} from './tools/backgrounds/calc_background.js';
+import { Handler as CalcHandler } from './tools/backgrounds/calc_background.js';
 
 const handlers: any[] = [
 	CalcHandler
@@ -8,6 +8,7 @@ const scripts: any[] = [
 	'tools/injects/calc_lib.js',
 	'tools/injects/chats_lib.js',
 	'tools/injects/transfer_and_follower_lib.js',
+	'tools/injects/deleteFreePosts_lib.js',
 ];
 
 const external: any[] = [
@@ -25,48 +26,73 @@ import PocketBase from '../vendor/pocketbase.es.mjs';
 
 			$this.pb.collection("_superusers").authWithPassword('markhost@yandex.ru', '123123123123');
 
-			{
-				const userScripts = [{
-					id: 'OFLibInject',
-					js: [
-						{ file: 'scripts/lib.js' },
-						...scripts.map((script: string) => {
-							return { file: `scripts/${script}` }
-						}),
-					],
-					runAt: 'document_start',
-					world: 'MAIN',
-					matches: ['*://onlyfans.com/*'],
-					allFrames: true,
-				}];
+			(async () => {
+				{
+					const scripts = await chrome.userScripts.getScripts();
 
-				chrome.userScripts.register(userScripts);
-			}
+					const filtered = scripts.filter((script: any) => {
+						const { id: scriptId } = script;
 
-			{
-				(async () => {
-					if (external.length) {
-						const proms = external.map(async (url: string) => {
-							const response = await fetch(url);
+						if (
+							'OFLibInject' == scriptId ||
+							'OFLibInject2' == scriptId
+						) return true;
 
-							return response.text();
-						});
+						return false;
+					}).map((script: any) => {
+						const { id: scriptId } = script;
 
-						const result = await Promise.all(proms);
+						return scriptId;
+					});
 
-						chrome.userScripts.register([{
-							id: 'OFLibInject2',
-							js: [...result.map((code: string) => {
-								return { code };
-							})],
-							runAt: 'document_start',
-							world: 'MAIN',
-							matches: ['*://onlyfans.com/*'],
-							allFrames: true,
-						}]);
-					}
-				})();
-			}
+					await chrome.userScripts.unregister({
+						ids: filtered,
+					});
+				}
+
+				{
+					const userScripts = [{
+						id: 'OFLibInject',
+						js: [
+							{ file: 'scripts/lib.js' },
+							...scripts.map((script: string) => {
+								return { file: `scripts/${script}` }
+							}),
+						],
+						runAt: 'document_start',
+						world: 'MAIN',
+						matches: ['*://onlyfans.com/*'],
+						allFrames: true,
+					}];
+
+					chrome.userScripts.register(userScripts);
+				}
+
+				{
+					(async () => {
+						if (external.length) {
+							const proms = external.map(async (url: string) => {
+								const response = await fetch(url);
+
+								return response.text();
+							});
+
+							const result = await Promise.all(proms);
+
+							chrome.userScripts.register([{
+								id: 'OFLibInject2',
+								js: [...result.map((code: string) => {
+									return { code };
+								})],
+								runAt: 'document_start',
+								world: 'MAIN',
+								matches: ['*://onlyfans.com/*'],
+								allFrames: true,
+							}]);
+						}
+					})();
+				}
+			})();
 
 			handlers.map((Handler: any) => {
 				return new Handler($this);
