@@ -621,11 +621,13 @@ URL = new Proxy(URL, {
 
 				const state = $this.getState();
 
-				const { auth, users } = state;
+				const { init, auth, users } = state;
 
-				const { isLogin, user: userId } = auth;
+				const { isAuth } = init;
 
-				if (isLogin && userId) {
+				const { user: userId } = auth;
+
+				if (isAuth && userId) {
 					const { items } = users;
 
 					const user = items[userId];
@@ -644,7 +646,10 @@ URL = new Proxy(URL, {
 
 			const state = $this.getState();
 
-			const { statements, chats, subscribers, subscribes, users } = state;
+			const { statements, chats, subscribers, subscribes, users, posts } = state;
+
+			posts.itemIds = [];
+			posts.items = {};
 
 			statements.earnings = [];
 
