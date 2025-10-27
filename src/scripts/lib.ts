@@ -512,8 +512,6 @@
 
 						const { posts: postsHasMore } = hasMore;
 
-						const ts = parseInt(`${beforePublishTime.split('.')[0]}000`);
-
 						resolve({
 							list: response,
 							hasMore: postsHasMore,
