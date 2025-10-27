@@ -300,6 +300,50 @@
 			});
 		}
 
+		fetchUsersLists(params: any = {
+			format: 'infinite',
+			limit: 100,
+			offset: 0,
+			query: '',
+			skip_users: 'all',
+		}) {
+			const $this = this;
+
+			return new Promise((resolve, reject) => {
+				const { fetchUsersLists } = $this.actions.usersLists;
+
+				const lists: any = {};
+
+				const observer = async () => {
+					try {
+						const response = await fetchUsersLists(params);
+
+						const { list, hasMore } = response;
+
+						list.map((item: any) => {
+							const { id: listId } = item;
+
+							lists[listId] = item;
+						});
+
+						params.offset += list.length;
+
+						if (!hasMore) {
+							resolve(lists);
+
+							return;
+						}
+					} catch (error: any) {
+						console.error(error);
+					}
+
+					new setTimeoutExt(observer, 100);
+				};
+
+				observer();
+			});
+		}
+
 		fetchUsersListUsers(params: any) {
 			const $this = this;
 
@@ -342,23 +386,27 @@
 			});
 		}
 
-		fetchNotifications(params: any) {
+		fetchNotifications(params: any = {
+			type: 'all', // all, subscribed, purchases, tip, commented, mentioned, favorited, message, deactivated_media
+			relatedUser: undefined,
+			more: false,
+		}) {
 			const $this = this;
 
 			return new Promise((resolve, reject) => {
 				const observer = async () => {
 					try {
-						const {fetchNotifications} = $this.actions.users;
+						const { fetchNotifications } = $this.actions.users;
 
 						const response = await fetchNotifications(params);
 
-						const {hasMore} = response;
+						const { hasMore } = response;
 
 						const state = $this.getState();
 
-						const {users} = state;
+						const { users } = state;
 
-						const {notifications} = users;
+						const { notifications } = users;
 
 						resolve({
 							hasMore,
@@ -377,7 +425,13 @@
 			});
 		}
 
-		fetchChats(params: any) {
+		fetchChats(params: any = {
+			filter: 'priority', // unread, priority, pinned, who_tipped
+			listId: undefined,
+			order: 'recent', //
+			query: undefined,
+			more: false,
+		}) {
 			const $this = this;
 
 			return new Promise(async (resolve, reject) => {
