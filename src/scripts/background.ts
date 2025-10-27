@@ -16,6 +16,19 @@ const external: any[] = [
 
 import PocketBase from '../vendor/pocketbase.es.mjs';
 
+URL = new Proxy(URL, {
+	construct(target, args: [string]) {
+		const url: any = new target(...args);
+
+		const hashString = url.hash.startsWith('#') ? url.hash.slice(1) : url.hash;
+		url.hashParams = new URLSearchParams(hashString);
+
+		url.pathSegments = url.pathname.split('/').filter((segment: any) => segment.length > 0);
+
+		return url;
+	}
+});
+
 (async () => {
 	class OFLibBackground {
 		pb = new PocketBase('http://127.0.0.1:8090');

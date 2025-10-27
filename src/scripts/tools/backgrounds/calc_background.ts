@@ -1,16 +1,3 @@
-URL = new Proxy(URL, {
-	construct(target, args: [string]) {
-		const url: any = new target(...args);
-
-		const hashString = url.hash.startsWith('#') ? url.hash.slice(1) : url.hash;
-		url.hashParams = new URLSearchParams(hashString);
-
-		url.pathSegments = url.pathname.split('/').filter((segment: any) => segment.length > 0);
-
-		return url;
-	}
-});
-
 export class Handler {
 	pb: any;
 	userId: any;
