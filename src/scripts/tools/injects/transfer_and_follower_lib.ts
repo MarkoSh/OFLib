@@ -144,6 +144,8 @@ const transferSpenders = async (OFLib: any) => {
 
 	if (!url.hashParams.has('transfer')) return;
 
+	console.log('Transfer');
+
 	const { userId } = OFLib.model;
 
 	const settings = {

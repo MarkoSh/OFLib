@@ -554,6 +554,35 @@
 			});
 		}
 
+		addUsersToLists(params: any = {
+			data: {
+				// [listId]: [ids]
+			},
+			updateFriendsList: false,
+		}) {
+			const $this = this;
+
+			return new Promise((resolve, reject) => {
+				const { addUsersToLists } = $this.actions.usersLists;
+
+				const observer = async () => {
+					try {
+						const response = await queue.add(async () => await addUsersToLists(params));
+
+						resolve(response);
+
+						return;
+					} catch (error: any) {
+						console.error(error);
+					}
+
+					new setTimeoutExt(observer, 100);
+				};
+
+				observer();
+			});
+		}
+
 		doSubscribe(userId: number) {
 			const $this = this;
 
