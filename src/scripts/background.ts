@@ -27,8 +27,8 @@ import PocketBase from '../vendor/pocketbase.es.mjs';
 						const { id: scriptId } = script;
 
 						if (
-							'OFLibInject' == scriptId ||
-							'OFLibInject2' == scriptId
+							'OFLibInjectLocal' == scriptId ||
+							'OFLibInjectExternal' == scriptId
 						) return true;
 
 						return false;
@@ -45,7 +45,7 @@ import PocketBase from '../vendor/pocketbase.es.mjs';
 
 				{
 					const userScripts = [{
-						id: 'OFLibInject',
+						id: 'OFLibInjectLocal',
 						js: [
 							{ file: 'scripts/lib.js' },
 							...scripts.map((script: string) => {
@@ -73,7 +73,7 @@ import PocketBase from '../vendor/pocketbase.es.mjs';
 							const result = await Promise.all(proms);
 
 							chrome.userScripts.register([{
-								id: 'OFLibInject2',
+								id: 'OFLibInjectExternal',
 								js: [...result.map((code: string) => {
 									return { code };
 								})],
