@@ -1,18 +1,18 @@
+URL = new Proxy(URL, {
+	construct(target, args: [string]) {
+		const url: URL = new target(...args);
+
+		const hashString = url.hash.startsWith('#') ? url.hash.slice(1) : url.hash;
+		url.hashParams = new URLSearchParams(hashString);
+
+		url.pathSegments = url.pathname.split('/').filter((segment: string) => segment.length > 0);
+
+		return url;
+	}
+});
+
 (async () => {
 	window.injected = [];
-
-	window.URL = new Proxy(URL, {
-		construct(target, args: [string]) {
-			const url: URL = new target(...args);
-
-			const hashString = url.hash.startsWith('#') ? url.hash.slice(1) : url.hash;
-			url.hashParams = new URLSearchParams(hashString);
-
-			url.pathSegments = url.pathname.split('/').filter((segment: string) => segment.length > 0);
-
-			return url;
-		}
-	});
 
 	class RequestQueue {
 		queue: Promise<void>;
@@ -623,7 +623,7 @@
 
 				const { init, auth, users } = state;
 
-				const {isAuth} = init;
+				const { isAuth } = init;
 
 				const { user: userId } = auth;
 
