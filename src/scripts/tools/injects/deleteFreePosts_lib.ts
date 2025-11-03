@@ -3,11 +3,10 @@ const deleteFreePosts = (OFLib: any) => {
 
 	if (!url.hashParams.has('deleteFreePosts')) return;
 
-	const { id: userId } = OFLib.model;
-
 	const params = {
-		beforePublishTime: undefined,
+		limit: 50,
 		more: false,
+		beforePublishTime: undefined,
 	};
 
 	const observer = async () => {
@@ -23,7 +22,9 @@ const deleteFreePosts = (OFLib: any) => {
 
 		const beforePublishTimeDate = new Date(ts);
 
-		const freePosts: any[] = list.filter((post: any) => {
+		const freePosts: any[] = list;
+
+		const freePosts_: any[] = list.filter((post: any) => {
 			const { isPinned, price, text } = post;
 
 			const el = document.createElement('div');
@@ -33,7 +34,7 @@ const deleteFreePosts = (OFLib: any) => {
 			const a = el.querySelector('a');
 
 			if (a) {
-				const {innerHTML} = a;
+				const { innerHTML } = a;
 
 				if (!innerHTML.startsWith('@') && !isPinned && !price) return true;
 			}
