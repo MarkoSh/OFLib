@@ -514,12 +514,13 @@ URL = new Proxy(URL, {
 		}
 
 		fetchUserPosts(params: any = {
-			id: this.model.userId,
 			limit: 50,
 			more: false,
 			beforePublishTime: undefined,
 		}) {
 			const $this = this;
+
+			params.id = $this.model.userId
 
 			return new Promise((resolve, reject) => {
 				const { fetchUserPosts } = $this.actions.posts;
