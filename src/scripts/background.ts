@@ -9,6 +9,7 @@ const scripts: any[] = [
 	'tools/injects/chats_lib.js',
 	'tools/injects/transfer_and_follower_lib.js',
 	'tools/injects/deleteFreePosts_lib.js',
+	'tools/injects/cleanMyVault_lib.js',
 ];
 
 const external: any[] = [
