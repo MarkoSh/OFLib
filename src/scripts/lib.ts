@@ -425,17 +425,15 @@ URL = new Proxy(URL, {
 			});
 		}
 
-		fetchCampaigns() {
+		fetchCampaigns(params: any = {
+			limit: 100,
+			offset: 0,
+			more: false,
+		}) {
 			const $this = this;
 
 			return new Promise((resolve, reject) => {
 				const { fetchCampaigns } = $this.actions.campaigns;
-
-				const params = {
-					limit: 100,
-					offset: 0,
-					more: false,
-				};
 
 				const campaigns: any = {};
 
