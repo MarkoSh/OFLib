@@ -649,6 +649,8 @@ URL = new Proxy(URL, {
 
 			const { statements, chats, subscribers, subscribes, users, posts } = state;
 
+			users.notifications = [users.notifications[users.notifications.length - 1]]
+
 			posts.itemIds = [];
 			posts.items = {};
 
