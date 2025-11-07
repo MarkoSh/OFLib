@@ -996,8 +996,6 @@ window.injected.push((OFLib: any) => {
 			const $this = this;
 
 			return new Promise((resolve, reject) => {
-				const { fetchCampaigns } = OFLib.actions.campaigns;
-
 				const params = {
 					limit: 100,
 					offset: 0,
@@ -1008,7 +1006,7 @@ window.injected.push((OFLib: any) => {
 
 				const observer = async () => {
 					try {
-						const response = await queue.add(async () => await fetchCampaigns(params));
+						const response = await queue.add(async () => await OFLib.fetchCampaigns(params));
 
 						const { list, hasMore } = response;
 

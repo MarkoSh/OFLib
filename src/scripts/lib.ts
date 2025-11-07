@@ -425,6 +425,59 @@ URL = new Proxy(URL, {
 			});
 		}
 
+		fetchCampaigns() {
+			const $this = this;
+
+			return new Promise((resolve, reject) => {
+				const { fetchCampaigns } = $this.actions.campaigns;
+
+				const params = {
+					limit: 100,
+					offset: 0,
+					more: false,
+				};
+
+				const campaigns: any = {};
+
+				const observer = async () => {
+					try {
+						const response = await fetchCampaigns(params);
+
+						const { list, hasMore } = response;
+
+						list.map((campaign: any) => {
+							const { id: campaignId } = campaign;
+
+							campaign.campaignId = campaignId;
+
+							delete campaign.id;
+
+							campaign.userId = $this.model.userId;
+
+							campaigns[campaignId] = campaign;
+
+							return campaignId;
+						});
+
+						params.offset += 100;
+						params.more = true;
+
+						if (!hasMore) {
+							resolve(campaigns);
+
+							return;
+						}
+					} catch (error: any) {
+						console.error(error);
+					}
+
+					new setTimeoutExt(observer, 100);
+				};
+
+				observer();
+			});
+		}
+
 		fetchChats(params: any = {
 			filter: 'priority', // unread, priority, pinned, who_tipped
 			listId: undefined,
