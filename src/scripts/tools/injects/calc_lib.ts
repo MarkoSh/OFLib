@@ -159,7 +159,7 @@ window.injected.push((OFLib: any) => {
 			const processed = {};
 
 			const observer = async () => {
-				const response = await queue.add(async () => await OFLib.fetchNotifications(params));
+				const response = await OFLib.fetchNotifications(params);
 
 				const {
 					hasMore,
@@ -592,7 +592,7 @@ window.injected.push((OFLib: any) => {
 									},
 								};
 
-								const response = await queue.add(async () => await OFLib.getUsersByIds(params));
+								const response = await OFLib.getUsersByIds(params);
 
 								Object.values(response).map((user: any) => {
 									list_f.push(user);
@@ -960,7 +960,7 @@ window.injected.push((OFLib: any) => {
 
 					const { userId } = params;
 
-					const response = await fetchChatsMessages(params);
+					const response = await queue.add(async () => await fetchChatsMessages(params));
 
 					const state = OFLib.getState();
 
@@ -1006,7 +1006,7 @@ window.injected.push((OFLib: any) => {
 
 				const observer = async () => {
 					try {
-						const response = await queue.add(async () => await OFLib.fetchCampaigns(params));
+						const response = await OFLib.fetchCampaigns(params);
 
 						const { list, hasMore } = response;
 
