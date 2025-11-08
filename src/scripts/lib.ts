@@ -312,27 +312,13 @@ URL = new Proxy(URL, {
 			return new Promise((resolve, reject) => {
 				const { fetchUsersLists } = $this.actions.usersLists;
 
-				const lists: any = {};
-
 				const observer = async () => {
 					try {
 						const response = await queue.add(async () => await fetchUsersLists(params));
 
-						const { list, hasMore } = response;
+						resolve(response);
 
-						list.map((item: any) => {
-							const { id: listId } = item;
-
-							lists[listId] = item;
-						});
-
-						params.offset += list.length;
-
-						if (!hasMore) {
-							resolve(lists);
-
-							return;
-						}
+						return;
 					} catch (error: any) {
 						console.error(error);
 					}
@@ -435,36 +421,41 @@ URL = new Proxy(URL, {
 			return new Promise((resolve, reject) => {
 				const { fetchCampaigns } = $this.actions.campaigns;
 
-				const campaigns: any = {};
-
 				const observer = async () => {
 					try {
 						const response = await queue.add(async () => await fetchCampaigns(params));
 
-						const { list, hasMore } = response;
+						resolve(response);
 
-						list.map((campaign: any) => {
-							const { id: campaignId } = campaign;
+						return;
+					} catch (error: any) {
+						console.error(error);
+					}
 
-							campaign.campaignId = campaignId;
+					new setTimeoutExt(observer, 100);
+				};
 
-							delete campaign.id;
+				observer();
+			});
+		}
 
-							campaign.userId = $this.model.userId;
+		fetchTrials(params: any = {
+			limit: 100,
+			offset: 0,
+			more: false,
+		}) {
+			const $this = this;
 
-							campaigns[campaignId] = campaign;
+			return new Promise((resolve, reject) => {
+				const { fetchTrials } = $this.actions.subscribers;
 
-							return campaignId;
-						});
+				const observer = async () => {
+					try {
+						const response = await queue.add(async () => await fetchTrials(params));
 
-						params.offset += 100;
-						params.more = true;
+						resolve(response);
 
-						if (!hasMore) {
-							resolve(campaigns);
-
-							return;
-						}
+						return;
 					} catch (error: any) {
 						console.error(error);
 					}
@@ -488,47 +479,13 @@ URL = new Proxy(URL, {
 			return new Promise(async (resolve, reject) => {
 				const { fetchChats } = $this.actions.chats;
 
-				const chats: any = {};
-
 				const observer = async () => {
 					try {
 						const response = await queue.add(async () => await fetchChats(params));
 
-						const { list, hasMore } = response;
+						resolve(response);
 
-						const usersIds = list.map((chat: any) => {
-							const { withUser: user } = chat;
-
-							const { id: userId } = user;
-
-							chats[userId] = chat;
-
-							return userId;
-						});
-
-						{
-							const params = {
-								ids: {
-									f: usersIds,
-								},
-							};
-
-							const response = await queue.add(async () => await $this.getUsersByIds(params));
-
-							Object.values(response).map((user: any) => {
-								const { id: userId } = user;
-
-								Object.assign(chats[userId].withUser, user);
-							});
-						}
-
-						params.more = true;
-
-						if (!hasMore) {
-							resolve(chats);
-
-							return;
-						}
+						return;
 					} catch (error: any) {
 						console.error(error);
 					}
