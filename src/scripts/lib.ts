@@ -227,7 +227,7 @@ URL = new Proxy(URL, {
 					try {
 						const { getUsersByIds } = $this.actions.users;
 
-						const response = await getUsersByIds(params);
+						const response = await queue.add(async () => await getUsersByIds(params));
 
 						const state = $this.getState();
 
@@ -278,7 +278,7 @@ URL = new Proxy(URL, {
 					try {
 						const { fetchEarnings } = $this.actions.statements;
 
-						const response = await fetchEarnings(params);
+						const response = await queue.add(async () => await fetchEarnings(params));
 
 						const state = $this.getState();
 
@@ -316,7 +316,7 @@ URL = new Proxy(URL, {
 
 				const observer = async () => {
 					try {
-						const response = await fetchUsersLists(params);
+						const response = await queue.add(async () => await fetchUsersLists(params));
 
 						const { list, hasMore } = response;
 
@@ -352,7 +352,7 @@ URL = new Proxy(URL, {
 					try {
 						const { fetchUsersListUsers } = $this.actions.usersLists;
 
-						const response = await fetchUsersListUsers(params);
+						const response = await queue.add(async () => await fetchUsersListUsers(params));
 
 						const state = $this.getState();
 
@@ -398,7 +398,7 @@ URL = new Proxy(URL, {
 					try {
 						const { fetchNotifications } = $this.actions.users;
 
-						const response = await fetchNotifications(params);
+						const response = await queue.add(async () => await fetchNotifications(params));
 
 						const { hasMore } = response;
 
@@ -439,7 +439,7 @@ URL = new Proxy(URL, {
 
 				const observer = async () => {
 					try {
-						const response = await fetchCampaigns(params);
+						const response = await queue.add(async () => await fetchCampaigns(params));
 
 						const { list, hasMore } = response;
 
@@ -548,7 +548,7 @@ URL = new Proxy(URL, {
 
 				const observer = async () => {
 					try {
-						const response = await deletePost(postId);
+						const response = await queue.add(async () => await deletePost(postId));
 
 						resolve(response);
 
@@ -669,7 +669,7 @@ URL = new Proxy(URL, {
 			return new Promise(async (resolve, reject) => {
 				const { fetchUserMe } = $this.actions.auth;
 
-				await fetchUserMe();
+				await queue.add(async () => await fetchUserMe());
 
 				const state = $this.getState();
 
